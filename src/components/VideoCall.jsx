@@ -1,6 +1,8 @@
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react'
 import { channelName, config, useClient, useMicrophoneAndCameraTracks } from '../settings';
+import Controls from './Controls';
+import Video from './Video';
 
 function VideoCall(props) {
     
