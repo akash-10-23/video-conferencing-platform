@@ -1,8 +1,74 @@
-import React from 'react'
+import React, { useState } from 'react'
+import MicIcon from "@material-ui/icons/Mic";
+import MicOffIcon from "@material-ui/icons/MicOff";
+import VideocamIcon from "@material-ui/icons/Videocam";
+import VideocamOffIcon from "@material-ui/icons/VideocamOff";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { useClient } from '../settings';
+import { Button, Grid } from '@material-ui/core';
 
-function Controls() {
+function Controls(props) {
+
+    const client = useClient();
+    const { tracks, setTracks, setInCall } = props;
+    const [trackState, setTrackState] = useState({ video: true, audio: true });
+    
+    const leaveChannel = async () => {
+        await client.leave();
+        client.removeAllListeners();
+        tracks[0].close();
+        tracks[1].close();
+        setInCall(false);
+        setTracks(false);
+    }
+
+    const mute = async (type) => {
+        
+        if (type === "audio") {
+            await tracks[0].setEnabled(!trackState.audio);
+            setTrackState((prevState) => {
+                return { ...prevState, audio: !prevState.audio };
+            });
+        }
+        else if (type === "video") {
+            await tracks[1].setEnabled(!trackState.video);
+            setTrackState((prevState) => {
+                return { ...prevState, video: !prevState.video };
+            });
+        }
+    }
+
     return (
-        <div></div>
+        <Grid container spacing={2} alignItems="center">
+            <Grid item>
+                <Button
+                    variant="contained"
+                    color={trackState.audio ? "primary" : "secondary"}
+                    onclick={() => mute("audio")}
+                >
+                    {trackState.audio ? <MicIcon/> : <MicOffIcon/>}
+                </Button>
+            </Grid>
+            <Grid item>
+                <Button
+                    variant="contained"
+                    color={trackState.video ? "primary" : "secondary"}
+                    onclick={() => mute("video")}
+                >
+                    {trackState.video ? <VideocamIcon/> : <VideocamOffIcon/>}
+                </Button>
+            </Grid>
+            <Grid item>
+                <Button
+                    variant="contained"
+                    color="default"
+                    onclick={() => leaveChannel()}
+                >
+                    Leave
+                    <ExitToAppIcon/>
+                </Button>
+            </Grid>
+        </Grid>
     )
 }
 
