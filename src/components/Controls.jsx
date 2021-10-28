@@ -10,18 +10,9 @@ import { Button, Grid } from '@material-ui/core';
 function Controls(props) {
 
     const client = useClient();
-    const { tracks, setTracks, setInCall } = props;
+    const { tracks, setStart, setInCall } = props;
     const [trackState, setTrackState] = useState({ video: true, audio: true });
     
-    const leaveChannel = async () => {
-        await client.leave();
-        client.removeAllListeners();
-        tracks[0].close();
-        tracks[1].close();
-        setInCall(false);
-        setTracks(false);
-    }
-
     const mute = async (type) => {
         
         if (type === "audio") {
@@ -38,13 +29,22 @@ function Controls(props) {
         }
     }
 
+    const leaveChannel = async () => {
+        await client.leave();
+        client.removeAllListeners();
+        tracks[0].close();
+        tracks[1].close();
+        setStart(false);
+        setInCall(false);
+    }
+
     return (
         <Grid container spacing={2} alignItems="center">
             <Grid item>
                 <Button
                     variant="contained"
                     color={trackState.audio ? "primary" : "secondary"}
-                    onclick={() => mute("audio")}
+                    onClick={() => mute("audio")}
                 >
                     {trackState.audio ? <MicIcon/> : <MicOffIcon/>}
                 </Button>
@@ -53,7 +53,7 @@ function Controls(props) {
                 <Button
                     variant="contained"
                     color={trackState.video ? "primary" : "secondary"}
-                    onclick={() => mute("video")}
+                    onClick={() => mute("video")}
                 >
                     {trackState.video ? <VideocamIcon/> : <VideocamOffIcon/>}
                 </Button>
@@ -62,7 +62,7 @@ function Controls(props) {
                 <Button
                     variant="contained"
                     color="default"
-                    onclick={() => leaveChannel()}
+                    onClick={() => leaveChannel()}
                 >
                     Leave
                     <ExitToAppIcon/>

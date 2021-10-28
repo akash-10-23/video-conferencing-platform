@@ -75,7 +75,7 @@ function VideoCall(props) {
             </Grid>
             
             <Grid item style={ {height: "95%"}}>
-                {start && tracks && (<Video tracks={tracks} users={ users}/> )}
+                {start && tracks && <Video tracks={tracks} users={users}/>}
             </Grid>
         </Grid>
     );
